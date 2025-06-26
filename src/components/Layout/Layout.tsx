@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import ConnectionStatus from '../UI/ConnectionStatus';
+import { ConnectionStatus } from '../UI/ConnectionStatus';
 
 interface LayoutProps {
   children: React.ReactNode;
