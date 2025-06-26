@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Customer } from '../types';
+import { EnhancedCustomer } from '../types';
 import { serviceFactory } from '../services/serviceFactory';
 
 export const useCustomers = () => {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<EnhancedCustomer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,7 +22,7 @@ export const useCustomers = () => {
     }
   };
 
-  const createCustomer = async (customer: Omit<Customer, 'id' | 'createdAt' | 'totalOrders' | 'totalSpent'>) => {
+  const createCustomer = async (customer: Omit<EnhancedCustomer, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       const service = serviceFactory.getCustomerService();
       const newCustomer = await service.create(customer);
@@ -34,7 +34,7 @@ export const useCustomers = () => {
     }
   };
 
-  const updateCustomer = async (id: string, customer: Partial<Customer>) => {
+  const updateCustomer = async (id: string, customer: Partial<EnhancedCustomer>) => {
     try {
       const service = serviceFactory.getCustomerService();
       const updatedCustomer = await service.update(id, customer);

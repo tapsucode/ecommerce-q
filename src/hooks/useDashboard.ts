@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DashboardStats } from '../types';
-import { dashboardService } from '../services/dashboardService';
+import { serviceFactory } from '../services/serviceFactory';
 
 export const useDashboard = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { InventoryItem } from '../types';
-import { inventoryService } from '../services/inventoryService';
+import { serviceFactory } from '../services/serviceFactory';
 
 export const useInventory = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
@@ -10,10 +10,8 @@ export const useInventory = () => {
   const fetchInventory = async () => {
     try {
       setLoading(true);
-      // Assuming serviceFactory and getInventoryService are available in the scope
-      // and correctly configured to provide the inventoryService.  If not,
-      // this will need to be adjusted based on the actual implementation.
-      const data = await inventoryService.getAll();
+      const service = serviceFactory.getInventoryService();
+      const data = await service.getAll();
       setInventory(data);
       setError(null);
     } catch (err) {
@@ -26,7 +24,8 @@ export const useInventory = () => {
 
   const updateStock = async (id: string, quantity: number) => {
     try {
-      const updatedItem = await inventoryService.updateStock(id, quantity);
+      const service = serviceFactory.getInventoryService();
+      const updatedItem = await service.updateStock(id, quantity);
       setInventory(prev => prev.map(item => item.id === id ? updatedItem : item));
       return updatedItem;
     } catch (err) {

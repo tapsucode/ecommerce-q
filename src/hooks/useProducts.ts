@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Product } from '../types';
-import { productService } from '../services/productService';
+import { serviceFactory } from '../services/serviceFactory';
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,7 +22,8 @@ export const useProducts = () => {
 
   const createProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      const newProduct = await productService.create(product);
+      const service = serviceFactory.getProductService();
+      const newProduct = await service.create(product);
       setProducts(prev => [...prev, newProduct]);
       return newProduct;
     } catch (err) {
@@ -33,7 +34,8 @@ export const useProducts = () => {
 
   const updateProduct = async (id: string, product: Partial<Product>) => {
     try {
-      const updatedProduct = await productService.update(id, product);
+      const service = serviceFactory.getProductService();
+      const updatedProduct = await service.update(id, product);
       setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p));
       return updatedProduct;
     } catch (err) {
@@ -44,7 +46,8 @@ export const useProducts = () => {
 
   const deleteProduct = async (id: string) => {
     try {
-      await productService.delete(id);
+      const service = serviceFactory.getProductService();
+      await service.delete(id);
       setProducts(prev => prev.filter(p => p.id !== id));
     } catch (err) {
       setError('Failed to delete product');
