@@ -137,23 +137,21 @@ This is a comprehensive order management system built with React, TypeScript, an
 - Customer and promotion management integrated into order creation
 
 ### Demo Accounts Available
-- **Manager**: username `manager1`, password `password123`
-- **Salesperson**: username `sales1`, password `password123`  
-- **Warehouse**: username `warehouse1`, password `password123`
+- **Admin**: username `admin`, password `password123`
+- **Manager**: username `manager`, password `password123`
+- **Employee**: username `employee`, password `password123`
 
 ## Recent Changes
 
 June 26, 2025:
-- Implemented complete role-based authentication system
-- Created enhanced order creation form with customer search
-- Added automatic promotion application functionality
-- Built comprehensive order workflow management
-- Integrated Vietnamese localization throughout interface
-- Added role-specific dashboard statistics and filtering
-- Enhanced order workflow with status transitions (draft → confirmed → preparing → shipped → delivered)
-- Implemented EnhancedCreateOrderForm with automatic customer creation and promotion application
-- Updated OrderWorkflowActions component with role-based permissions
-- Created comprehensive Vietnamese order management interface with proper currency formatting
+- **Updated Role System**: Changed from previous roles to admin, manager, and employee
+- **Enhanced Authentication**: Updated user accounts and permissions for new role structure
+- **New Service Layer**: Created enhanced order service with role-based filtering and access control
+- **Mock Data Update**: Built new mock data with proper role assignments and Vietnamese content
+- **Permission System**: Implemented proper access control for each role level
+- **Order Workflow**: Enhanced status transitions with role-specific permissions
+- **Vietnamese Interface**: Maintained full Vietnamese localization with proper currency formatting
+- **Demo Accounts**: Updated with admin, manager, and employee test accounts
 
 ## User Preferences
 

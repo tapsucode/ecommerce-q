@@ -4,33 +4,33 @@ import { User, LoginRequest, LoginResponse } from '../types';
 const mockUsers: User[] = [
   {
     id: '1',
-    username: 'manager1',
-    email: 'manager@company.com',
-    fullName: 'Nguyễn Văn Manager',
+    username: 'admin',
+    email: 'admin@company.com',
+    fullName: 'Quản trị viên',
     phone: '0901234567',
-    role: 'manager',
+    role: 'admin',
     active: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     id: '2',
-    username: 'sales1',
-    email: 'sales1@company.com',
-    fullName: 'Trần Thị Sales',
+    username: 'manager',
+    email: 'manager@company.com',
+    fullName: 'Quản lý',
     phone: '0907654321',
-    role: 'salesperson',
+    role: 'manager',
     active: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     id: '3',
-    username: 'warehouse1',
-    email: 'warehouse@company.com',
-    fullName: 'Lê Văn Warehouse',
+    username: 'employee',
+    email: 'employee@company.com',
+    fullName: 'Nhân viên',
     phone: '0909876543',
-    role: 'warehouse',
+    role: 'employee',
     active: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
@@ -100,20 +100,20 @@ class AuthService {
     return user?.role === role;
   }
 
-  canAccessOrder(orderId: string, salesPersonId?: string): boolean {
+  canAccessOrder(orderId: string, employeeId?: string): boolean {
     const user = this.getCurrentUser();
     if (!user) return false;
+
+    // Admin can access all orders
+    if (user.role === 'admin') return true;
 
     // Manager can access all orders
     if (user.role === 'manager') return true;
 
-    // Salesperson can only access their own orders
-    if (user.role === 'salesperson') {
-      return user.id === salesPersonId;
+    // Employee can only access their own orders
+    if (user.role === 'employee') {
+      return user.id === employeeId;
     }
-
-    // Warehouse can access confirmed orders for preparation
-    if (user.role === 'warehouse') return true;
 
     return false;
   }
@@ -123,24 +123,40 @@ class AuthService {
     if (!user) return false;
 
     const permissions = {
-      manager: [
+      admin: [
         'view_all_orders',
         'confirm_order',
         'cancel_order',
         'view_reports',
         'manage_users',
         'manage_promotions',
+        'manage_inventory',
+        'update_order_status',
+        'prepare_orders',
+        'ship_orders',
+        'create_order',
+        'search_customers',
+        'apply_promotions',
       ],
-      salesperson: [
+      manager: [
+        'view_all_orders',
+        'confirm_order',
+        'cancel_order',
+        'view_reports',
+        'manage_promotions',
+        'create_order',
+        'search_customers',
+        'apply_promotions',
+      ],
+      employee: [
         'create_order',
         'view_own_orders',
         'search_customers',
         'apply_promotions',
-      ],
-      warehouse: [
-        'view_confirmed_orders',
-        'update_order_status',
         'manage_inventory',
+        'update_order_status',
+        'prepare_orders',
+        'ship_orders',
       ],
     };
 

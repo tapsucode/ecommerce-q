@@ -99,10 +99,20 @@ export interface InventoryItem {
   lastUpdated: string;
 }
 
+export interface EnhancedOrder {
   id: string;
+  customer: EnhancedCustomer;
+  salesPerson: User;
+  status: 'draft' | 'confirmed' | 'preparing' | 'shipped' | 'delivered' | 'cancelled';
   items: OrderItem[];
+  subtotal: number;
+  discountAmount: number;
+  shippingFee: number;
   total: number;
+  promotion?: EnhancedPromotion;
+  notes?: string;
   confirmedAt?: string;
+  confirmedBy?: User;
   createdAt: string;
   updatedAt: string;
 }
@@ -119,6 +129,7 @@ export interface OrderItem {
   total: number;
 }
 
+// Removed duplicate Customer and Promotion interfaces - using the ones defined earlier
 
 export interface PromotionRule {
   id: string;
@@ -204,8 +215,48 @@ export interface User {
   username: string;
   email: string;
   fullName: string;
+  phone?: string;
+  role: 'salesperson' | 'manager' | 'warehouse';
   active: boolean;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface AuthUser extends User {
+  token: string;
+}
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  user: User;
+  token: string;
+}
+
+export interface EnhancedCustomer {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  address: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EnhancedPromotion {
+  id: string;
+  name: string;
+  type: 'percentage' | 'fixed_amount' | 'free_shipping';
+  value: number;
+  minOrderAmount?: number;
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Search and filter interfaces
