@@ -6,6 +6,9 @@ import Products from './pages/Products/Products';
 import Inventory from './pages/Inventory/Inventory';
 import Orders from './pages/Orders/Orders';
 import Customers from './pages/Customers/Customers';
+import Promotions from './pages/Promotions/Promotions';
+import Suppliers from './pages/Suppliers/Suppliers';
+import PurchaseOrders from './pages/PurchaseOrders/PurchaseOrders';
 import Reports from './pages/Reports/Reports';
 
 function App() {
@@ -18,6 +21,9 @@ function App() {
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/customers" element={<Customers />} />
+          <Route path="/promotions" element={<Promotions />} />
+          <Route path="/suppliers" element={<Suppliers />} />
+          <Route path="/purchase-orders" element={<PurchaseOrders />} />
           <Route path="/reports" element={<Reports />} />
         </Routes>
       </Layout>

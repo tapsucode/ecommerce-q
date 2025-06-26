@@ -87,6 +87,7 @@ export interface BundleItem {
 export interface InventoryItem {
   id: string;
   productId: string;
+  variantId?: string;
   productName: string;
   sku: string;
   currentStock: number;
@@ -103,13 +104,24 @@ export interface Order {
   orderNumber: string;
   customerId: string;
   customerName: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'shipped' | 'completed' | 'returned' | 'cancelled';
   channel: 'online' | 'retail' | 'wholesale';
   items: OrderItem[];
   total: number;
   discount?: number;
   appliedPromotions?: string[];
   currency: string;
+  salespersonId?: string;
+  salespersonName?: string;
+  platformOrderId?: string;
+  shippingProvider?: string;
+  trackingCode?: string;
+  shippingFee?: number;
+  shippingAddressDetails?: string;
+  confirmedAt?: string;
+  shippedAt?: string;
+  completedAt?: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -117,6 +129,8 @@ export interface Order {
 export interface OrderItem {
   id: string;
   productId: string;
+  variantId?: string;
+  bundleId?: string;
   productName: string;
   sku: string;
   quantity: number;
@@ -163,12 +177,86 @@ export interface PromotionRule {
   priority: number;
 }
 
+export interface Supplier {
+  id: string;
+  name: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  address: string;
+  paymentTerms: string;
+  notes: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  poNumber: string;
+  supplier: Supplier;
+  orderDate: string;
+  expectedDeliveryDate?: string;
+  status: 'draft' | 'ordered' | 'partially_received' | 'completed' | 'cancelled';
+  totalCost: number;
+  notes?: string;
+  createdBy: string;
+  items: PurchaseOrderItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PurchaseOrderItem {
+  id: string;
+  product?: Product;
+  variant?: ProductVariant;
+  productName: string;
+  sku: string;
+  quantity: number;
+  costPrice: number;
+  receivedQuantity: number;
+}
+
+export interface OrderReturn {
+  id: string;
+  order: Order;
+  returnNumber: string;
+  returnDate: string;
+  reason: 'damaged' | 'wrong_item' | 'customer_change_mind' | 'quality_issue' | 'other';
+  condition: 'new' | 'damaged' | 'used';
+  notes?: string;
+  processedBy?: string;
+  items: OrderReturnItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderReturnItem {
+  id: string;
+  orderItem: OrderItem;
+  product?: Product;
+  variant?: ProductVariant;
+  quantity: number;
+  condition: 'new' | 'damaged' | 'used';
+  restock: boolean;
+}
+
 export interface DashboardStats {
   totalRevenue: number;
   totalOrders: number;
   totalProducts: number;
   lowStockItems: number;
   currency: string;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  roles: string[];
+  active: boolean;
+  createdAt: string;
 }
 
 // Search and filter interfaces
