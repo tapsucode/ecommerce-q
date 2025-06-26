@@ -19,7 +19,6 @@ class PromotionService extends BaseHybridService {
       id: '2',
       name: 'Miễn phí vận chuyển',
       type: 'free_shipping',
-      type: 'free_shipping',
       value: 0,
       minOrderAmount: 300000,
       isActive: true,
