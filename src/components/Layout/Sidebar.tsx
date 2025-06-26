@@ -13,10 +13,17 @@ import {
   Percent,
   Truck,
   FileText,
-  Plus
+  Plus,
+  Menu,
+  ChevronLeft
 } from 'lucide-react';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const location = useLocation();
   const { t } = useTranslation();
   const { user, canPerformAction } = useAuth();
@@ -39,12 +46,31 @@ const Sidebar: React.FC = () => {
   );
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
-      <div className="flex h-16 items-center justify-center border-b border-gray-200">
-        <div className="flex items-center space-x-2">
+    <div className={`fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 ${
+      isOpen ? 'w-64' : 'w-16'
+    }`}>
+      {/* Header with toggle button */}
+      <div className="flex h-16 items-center justify-between border-b border-gray-200 px-3">
+        <div className={`flex items-center space-x-2 transition-opacity duration-200 ${
+          isOpen ? 'opacity-100' : 'opacity-0'
+        }`}>
           <Store className="h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">{t('sidebar.inventoryPro')}</span>
+          {isOpen && (
+            <span className="text-xl font-bold text-gray-900">{t('sidebar.inventoryPro')}</span>
+          )}
         </div>
+        
+        <button
+          onClick={onToggle}
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          title={isOpen ? 'Thu gọn sidebar' : 'Mở rộng sidebar'}
+        >
+          {isOpen ? (
+            <ChevronLeft className="h-5 w-5 text-gray-600" />
+          ) : (
+            <Menu className="h-5 w-5 text-gray-600" />
+          )}
+        </button>
       </div>
       
       <nav className="mt-6 px-3">
@@ -55,18 +81,21 @@ const Sidebar: React.FC = () => {
               <li key={item.name}>
                 <Link
                   to={item.href}
-                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive
                       ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                   }`}
+                  title={!isOpen ? item.name : undefined}
                 >
                   <item.icon
-                    className={`mr-3 h-5 w-5 transition-colors duration-200 ${
+                    className={`${isOpen ? 'mr-3' : 'mx-auto'} h-5 w-5 transition-colors duration-200 ${
                       isActive ? 'text-blue-700' : 'text-gray-400 group-hover:text-gray-500'
                     }`}
                   />
-                  {item.name}
+                  {isOpen && (
+                    <span className="transition-opacity duration-200">{item.name}</span>
+                  )}
                 </Link>
               </li>
             );
