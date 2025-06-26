@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   LayoutDashboard, 
   Package, 
@@ -11,13 +12,31 @@ import {
   Store,
   Percent,
   Truck,
+  FileText,
+  Plus
 } from 'lucide-react';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const { t } = useTranslation();
+  const { user, canPerformAction } = useAuth();
 
+  const allNavigation = [
+    { name: 'Dashboard', href: '/', icon: LayoutDashboard, action: null },
+    { name: 'Sản phẩm', href: '/products', icon: Package, action: 'manage_inventory' },
+    { name: 'Kho hàng', href: '/inventory', icon: Warehouse, action: 'manage_inventory' },
+    { name: 'Đơn hàng', href: '/orders', icon: ShoppingCart, action: null },
+    { name: 'Khách hàng', href: '/customers', icon: Users, action: 'search_customers' },
+    { name: 'Khuyến mãi', href: '/promotions', icon: Percent, action: 'manage_promotions' },
+    { name: 'Nhà cung cấp', href: '/suppliers', icon: Truck, action: 'manage_inventory' },
+    { name: 'Đơn mua hàng', href: '/purchase-orders', icon: FileText, action: 'manage_inventory' },
+    { name: 'Báo cáo', href: '/reports', icon: BarChart3, action: 'view_reports' },
   ];
+
+  // Filter navigation based on user permissions
+  const navigation = allNavigation.filter(item => 
+    !item.action || canPerformAction(item.action)
+  );
 
   return (
     <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
