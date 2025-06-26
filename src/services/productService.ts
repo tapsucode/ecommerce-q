@@ -60,7 +60,7 @@ class ProductService extends BaseHybridService {
 
     try {
       return await this.apiRequest<Product[]>(
-        `/products/search?q=${encodeURIComponent(query)}`,
+        `/products/search?query=${encodeURIComponent(query)}`,
         { method: 'GET' },
         mockFallback
       );

@@ -65,7 +65,7 @@ class CustomerService extends BaseHybridService {
 
     try {
       return await this.apiRequest<EnhancedCustomer | null>(
-        `/customers/search?phone=${encodeURIComponent(phone)}`,
+        `/customers/search/phone?phone=${encodeURIComponent(phone)}`,
         { method: 'GET' },
         mockFallback
       );

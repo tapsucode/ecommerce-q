@@ -1,4 +1,3 @@
-
 import { DashboardStats } from '../types';
 import { BaseHybridService } from './baseService';
 
@@ -9,7 +8,7 @@ class DashboardService extends BaseHybridService {
         setTimeout(() => {
           // Mock data based on role
           let stats: DashboardStats;
-          
+
           if (userRole === 'employee') {
             // Employee sees limited stats
             stats = {
@@ -29,7 +28,7 @@ class DashboardService extends BaseHybridService {
               currency: 'VND'
             };
           }
-          
+
           resolve(stats);
         }, this.getMockDelay());
       });
@@ -37,7 +36,7 @@ class DashboardService extends BaseHybridService {
 
     try {
       return await this.apiRequest<DashboardStats>(
-        `/dashboard/stats?userId=${userId}&userRole=${userRole}`,
+        `/dashboard/statistics?userId=${userId}&userRole=${userRole}`,
         { method: 'GET' },
         mockFallback
       );
@@ -94,7 +93,7 @@ class DashboardService extends BaseHybridService {
             { id: 'ORD-004', customer: 'Phạm Thị D', total: 750000, status: 'delivered' },
             { id: 'ORD-005', customer: 'Hoàng Văn E', total: 1650000, status: 'confirmed' },
           ];
-          
+
           resolve(mockOrders.slice(0, limit));
         }, this.getMockDelay());
       });
@@ -122,7 +121,7 @@ class DashboardService extends BaseHybridService {
             { name: 'Túi xách', sales: 76, revenue: 15200000 },
             { name: 'Đồng hồ', sales: 65, revenue: 32500000 },
           ];
-          
+
           resolve(topProducts.slice(0, limit));
         }, this.getMockDelay());
       });

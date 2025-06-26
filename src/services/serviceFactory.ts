@@ -73,7 +73,7 @@ class ServiceFactory {
 
   async checkBackendHealth(): Promise<boolean> {
     try {
-      const response = await fetch(`${configService.getConfig().apiBaseUrl}/health`, {
+      const response = await fetch(`${configService.getConfig().apiBaseUrl}/actuator/health`, {
         method: 'GET',
         timeout: 3000,
       });

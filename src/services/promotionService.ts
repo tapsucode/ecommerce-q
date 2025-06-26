@@ -1,4 +1,3 @@
-
 import { EnhancedPromotion } from '../types';
 import { BaseHybridService } from './baseService';
 
@@ -19,6 +18,7 @@ class PromotionService extends BaseHybridService {
     {
       id: '2',
       name: 'Miễn phí vận chuyển',
+      type: 'free_shipping',
       type: 'free_shipping',
       value: 0,
       minOrderAmount: 300000,
@@ -75,13 +75,13 @@ class PromotionService extends BaseHybridService {
           const now = new Date();
           const activePromotions = this.promotions.filter(p => {
             if (!p.isActive) return false;
-            
+
             const startDate = p.startDate ? new Date(p.startDate) : null;
             const endDate = p.endDate ? new Date(p.endDate) : null;
-            
+
             if (startDate && startDate > now) return false;
             if (endDate && endDate < now) return false;
-            
+
             return true;
           });
           resolve(activePromotions);
@@ -229,6 +229,28 @@ class PromotionService extends BaseHybridService {
     } catch (error) {
       await mockFallback();
     }
+  }
+
+  async applyPromotion(orderTotal: number, items: any[]): Promise<{ applicable: boolean; discount: number }> {
+    const mockFallback = async () => {
+      return new Promise<{ applicable: boolean; discount: number }>((resolve) => {
+        setTimeout(() => {
+          // Mock logic to determine if promotion is applicable and calculate discount
+          const applicable = orderTotal > 100; // Example condition
+          const discount = applicable ? 10 : 0; // Example discount
+          resolve({ applicable, discount });
+        }, this.getMockDelay());
+      });
+    };
+
+    return await this.apiRequest<{ applicable: boolean; discount: number }>(
+        '/promotions/apply',
+        {
+          method: 'POST',
+          body: JSON.stringify({ orderTotal, items }),
+        },
+        mockFallback
+      );
   }
 }
 

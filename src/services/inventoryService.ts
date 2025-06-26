@@ -90,7 +90,7 @@ class InventoryService extends BaseHybridService {
 
     try {
       return await this.apiRequest<InventoryItem>(
-        `/inventory/${id}/stock`,
+        `/inventory/${id}/update-stock`,
         {
           method: 'PUT',
           body: JSON.stringify({ quantity }),
@@ -125,7 +125,7 @@ class InventoryService extends BaseHybridService {
 
     try {
       return await this.apiRequest<InventoryItem>(
-        `/inventory/${id}/adjust`,
+        `/inventory/${id}/adjust-stock`,
         {
           method: 'POST',
           body: JSON.stringify({ adjustment, reason }),
@@ -161,7 +161,7 @@ class InventoryService extends BaseHybridService {
 
     try {
       const response = await this.apiRequest<{ success: boolean }>(
-        '/inventory/reserve',
+        '/inventory/reserve-stock',
         {
           method: 'POST',
           body: JSON.stringify({ productId, variantId, quantity }),
@@ -198,7 +198,7 @@ class InventoryService extends BaseHybridService {
 
     try {
       const response = await this.apiRequest<{ success: boolean }>(
-        '/inventory/release',
+        '/inventory/release-stock',
         {
           method: 'POST',
           body: JSON.stringify({ productId, variantId, quantity }),

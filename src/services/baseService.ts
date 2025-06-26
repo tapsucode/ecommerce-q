@@ -10,7 +10,7 @@ export class BaseHybridService {
 
   private async checkBackendHealth(): Promise<void> {
     try {
-      const response = await fetch(`${this.backendUrl}/health`, {
+      const response = await fetch(`${this.backendUrl}/actuator/health`, {
         method: 'GET',
         timeout: 3000,
       });
