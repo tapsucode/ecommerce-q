@@ -11,23 +11,12 @@ import {
   Store,
   Percent,
   Truck,
-  FileText
 } from 'lucide-react';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const { t } = useTranslation();
 
-  const navigation = [
-    { name: t('navigation.dashboard'), href: '/', icon: LayoutDashboard },
-    { name: t('navigation.products'), href: '/products', icon: Package },
-    { name: t('navigation.inventory'), href: '/inventory', icon: Warehouse },
-    { name: t('navigation.orders'), href: '/orders', icon: ShoppingCart },
-    { name: t('navigation.customers'), href: '/customers', icon: Users },
-    { name: t('navigation.promotions'), href: '/promotions', icon: Percent },
-    { name: t('navigation.suppliers'), href: '/suppliers', icon: Truck },
-    { name: t('navigation.purchaseOrders'), href: '/purchase-orders', icon: FileText },
-    { name: t('navigation.reports'), href: '/reports', icon: BarChart3 },
   ];
 
   return (

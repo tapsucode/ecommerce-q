@@ -1,6 +1,4 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bell, Search, User } from 'lucide-react';
 import LanguageSwitcher from '../UI/LanguageSwitcher';
 
 const Header: React.FC = () => {
@@ -16,7 +14,6 @@ const Header: React.FC = () => {
             </div>
             <input
               type="text"
-              placeholder={t('header.searchPlaceholder')}
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -30,14 +27,10 @@ const Header: React.FC = () => {
             <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-400"></span>
           </button>
           
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
-              <User className="h-5 w-5 text-white" />
-            </div>
-            <div className="hidden md:block">
-              <p className="text-sm font-medium text-gray-900">{t('header.adminUser')}</p>
-              <p className="text-xs text-gray-500">{t('header.administrator')}</p>
-            </div>
+              <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                <User className="h-5 w-5 text-white" />
+              </div>
+              </div>
           </div>
         </div>
       </div>

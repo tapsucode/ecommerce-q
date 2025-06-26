@@ -99,29 +99,10 @@ export interface InventoryItem {
   lastUpdated: string;
 }
 
-export interface Order {
   id: string;
-  orderNumber: string;
-  customerId: string;
-  customerName: string;
-  status: 'pending' | 'confirmed' | 'shipped' | 'completed' | 'returned' | 'cancelled';
-  channel: 'online' | 'retail' | 'wholesale';
   items: OrderItem[];
   total: number;
-  discount?: number;
-  appliedPromotions?: string[];
-  currency: string;
-  salespersonId?: string;
-  salespersonName?: string;
-  platformOrderId?: string;
-  shippingProvider?: string;
-  trackingCode?: string;
-  shippingFee?: number;
-  shippingAddressDetails?: string;
   confirmedAt?: string;
-  shippedAt?: string;
-  completedAt?: string;
-  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -138,37 +119,6 @@ export interface OrderItem {
   total: number;
 }
 
-export interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  country: string;
-  postalCode: string;
-  customerType: 'retail' | 'wholesale';
-  totalOrders: number;
-  totalSpent: number;
-  currency: string;
-  createdAt: string;
-  lastOrderAt?: string;
-}
-
-export interface Promotion {
-  id: string;
-  name: string;
-  description: string;
-  type: 'percentage_discount' | 'fixed_amount_discount' | 'buy_x_get_y' | 'free_shipping' | 'bundle_discount';
-  startDate?: string;
-  endDate?: string;
-  usageLimit?: number;
-  usageCount: number;
-  rules: PromotionRule[];
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export interface PromotionRule {
   id: string;
@@ -254,7 +204,6 @@ export interface User {
   username: string;
   email: string;
   fullName: string;
-  roles: string[];
   active: boolean;
   createdAt: string;
 }

@@ -1,106 +1,160 @@
-# OrderFlow - Order Management System
+# Enhanced Order Management System
 
 ## Overview
 
-OrderFlow is a full-stack order management web application built with React (frontend) and Node.js/Express (backend). The application provides a comprehensive dashboard for managing customer orders, including creation, editing, deletion, and tracking of order statuses. It features a modern UI built with shadcn/ui components and uses PostgreSQL for data persistence.
+This is a comprehensive order management system built with React, TypeScript, and Tailwind CSS. The application provides role-based order management with authentication, customer search, automatic promotion application, and workflow-based order processing designed for Vietnamese market requirements.
 
 ## System Architecture
 
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript
-- **Routing**: Wouter for client-side routing
-- **State Management**: TanStack Query (React Query) for server state management
-- **UI Framework**: shadcn/ui components built on Radix UI primitives
-- **Styling**: Tailwind CSS with CSS variables for theming
-- **Form Handling**: React Hook Form with Zod validation
-- **Build Tool**: Vite for development and production builds
+- **Styling**: Tailwind CSS with PostCSS for utility-first styling
+- **Routing**: React Router DOM for client-side navigation
+- **Authentication**: Custom authentication context with role-based permissions
+- **State Management**: Custom React hooks with local state management
+- **Internationalization**: Vietnamese language support throughout the interface
+- **Build Tool**: Vite for fast development and optimized builds
 
-### Backend Architecture
-- **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **Database ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL (configured for Neon serverless)
-- **Validation**: Zod schemas for request/response validation
-- **Development**: tsx for TypeScript execution in development
+### Authentication & Role System
+- **Role-Based Access Control**: Three distinct user roles (Manager, Salesperson, Warehouse)
+- **Permission System**: Action-based permissions for different operations
+- **Session Management**: Local storage with secure token handling
+- **Protected Routes**: Route-level access control based on user permissions
 
-### Database Design
-The application uses two main tables:
-- **orders**: Core order information (customer details, status, total, timestamps)
-- **order_items**: Individual line items for each order (product name, quantity, price)
+## Key Features Implemented
 
-The schema supports order statuses: pending, processing, completed, cancelled.
+### 1. Authentication & Role-Based Access Control
+- **User Roles**: Manager, Salesperson, Warehouse staff
+- **Permission System**: Action-based authorization (create_order, confirm_order, manage_inventory, etc.)
+- **Session Management**: Secure login/logout with token-based authentication
+- **Role-Specific Navigation**: Dynamic menu filtering based on user permissions
 
-## Key Components
+### 2. Enhanced Order Creation Process
+- **Customer Search**: Phone number-based customer lookup
+- **Auto Customer Creation**: Creates new customer if not found in system
+- **Automatic Promotion Application**: Real-time promotion calculation based on order value
+- **Product Management**: Dynamic item addition with pricing and quantity controls
+- **Vietnamese Localization**: Full Vietnamese language interface and currency formatting
 
-### Backend Components
-1. **Storage Layer** (`server/storage.ts`): Abstracted data access layer with in-memory implementation for development
-2. **Routes** (`server/routes.ts`): RESTful API endpoints for order management
-3. **Schema** (`shared/schema.ts`): Shared database schema and validation types
-4. **Server Setup** (`server/index.ts`): Express server configuration with middleware
+### 3. Role-Based Order Workflow
+- **Draft → Confirmed**: Manager approval required for order confirmation
+- **Confirmed → Preparing**: Warehouse staff can move orders to preparation
+- **Preparing → Shipped**: Warehouse staff updates shipping status
+- **Shipped → Delivered**: Final delivery confirmation
+- **Cancellation Rights**: Manager can cancel orders at appropriate stages
 
-### Frontend Components
-1. **Dashboard** (`client/src/pages/dashboard.tsx`): Main application interface
-2. **Order Management**: 
-   - OrderModal for creating/editing orders
-   - OrdersTable for displaying and managing order lists
-   - StatsCards for displaying key metrics
-3. **UI Components**: Comprehensive set of shadcn/ui components for consistent design
-4. **Sidebar Navigation**: Fixed navigation with order management features
+### 4. Workflow Permissions
+- **Salesperson**: Create orders, view own orders only, search customers
+- **Manager**: Full order oversight, confirm/cancel orders, view all reports
+- **Warehouse**: Inventory management, order fulfillment, shipping updates
+
+### 5. Dashboard & Analytics
+- **Role-Specific Stats**: Different metrics based on user role
+- **Order Status Tracking**: Real-time status distribution
+- **Revenue Analytics**: Financial performance indicators
+- **Recent Activity**: Latest order updates and actions required
 
 ## Data Flow
 
-1. **Order Creation**: User fills form → validation → API request → database insert → UI update
-2. **Order Retrieval**: Dashboard loads → API request → database query → UI render
-3. **Order Updates**: User edits → validation → API request → database update → UI refresh
-4. **Search/Filter**: User input → API request with query parameters → filtered results
+### Service Layer Architecture
+- **API Abstraction**: Centralized API service for HTTP requests
+- **Domain Services**: Specialized services for each business domain
+- **Mock Data**: Development-ready mock services simulating backend APIs
+- **Error Handling**: Consistent error handling across all services
 
-The application uses React Query for caching and synchronization, ensuring efficient data fetching and optimistic updates.
+### State Management Pattern
+- **Custom Hooks**: Domain-specific hooks for state management
+- **Async Operations**: Promise-based async operations with loading states
+- **Local State**: Component-level state for UI interactions
+- **Data Persistence**: LocalStorage for user preferences and settings
 
 ## External Dependencies
 
 ### Core Dependencies
-- **Database**: Neon PostgreSQL serverless database
-- **UI Framework**: Radix UI primitives for accessible components
-- **Validation**: Zod for runtime type checking and validation
+- **React Ecosystem**: React, ReactDOM, React Router DOM
+- **TypeScript**: Full type safety with strict configuration
+- **Styling**: Tailwind CSS with autoprefixer
+- **Internationalization**: i18next with React integration
+- **Charts**: Recharts for data visualization
 - **Icons**: Lucide React for consistent iconography
 - **Date Handling**: date-fns for date manipulation
-- **HTTP Client**: Native fetch API with React Query wrapper
+- **Performance**: Memoizee for function memoization
 
 ### Development Dependencies
-- **TypeScript**: Full TypeScript support across frontend and backend
-- **Vite**: Fast development server and build tool
-- **Tailwind CSS**: Utility-first CSS framework
-- **PostCSS**: CSS processing and autoprefixing
+- **Build Tools**: Vite with React plugin
+- **Code Quality**: ESLint with TypeScript support
+- **Type Checking**: TypeScript with strict configuration
+- **PostCSS**: CSS processing with Tailwind integration
 
 ## Deployment Strategy
 
-### Development Environment
-- **Hot Reload**: Vite development server with HMR
-- **Database**: Local PostgreSQL or Neon development database
-- **Scripts**: `npm run dev` for concurrent frontend/backend development
+### Database Integration
+- **Supabase**: PostgreSQL database with row-level security
+- **Migration System**: SQL migrations for schema management
+- **Real-time Support**: Prepared for real-time data synchronization
 
-### Production Deployment
-- **Build Process**: 
-  1. Frontend: Vite builds optimized React bundle
-  2. Backend: esbuild bundles Node.js application
-- **Runtime**: Node.js server serving both API and static files
-- **Database**: Neon PostgreSQL production instance
-- **Platform**: Configured for Replit deployment with autoscaling
+### Architecture Decisions (ADR)
+1. **UTF8MB4 Support**: Full Unicode support for multilingual content
+2. **JSONB Attributes**: Flexible product attributes and search optimization
+3. **Product Type Separation**: Clear distinction between structure and categorization
+4. **Rule-based Promotions**: Flexible promotion engine with condition/action rules
 
-### Configuration
-- **Environment Variables**: DATABASE_URL for database connection
-- **Port Configuration**: Server runs on port 5000, exposed as port 80
-- **Static Files**: Frontend build output served from `/dist/public`
+### Production Considerations
+- **Backend Integration**: Ready for Spring Boot API integration
+- **Authentication**: OpenID Connect integration prepared
+- **Performance**: Optimized bundle splitting and lazy loading
+- **Monitoring**: Error tracking and performance monitoring ready
 
-## Changelog
+## Implementation Status
 
-```
-Changelog:
-- June 26, 2025. Initial setup
-```
+### ✅ Completed Features
+1. **Authentication System**
+   - Role-based login with Manager, Salesperson, Warehouse roles
+   - Permission-based action authorization
+   - Secure session management with logout functionality
+
+2. **Enhanced Order Creation**
+   - Customer search by phone number with auto-creation
+   - Automatic promotion application based on order value
+   - Dynamic product item management with real-time calculations
+   - Vietnamese currency formatting and validation
+
+3. **Role-Based Workflow**
+   - Manager: Order confirmation, cancellation, full system oversight
+   - Salesperson: Order creation, view own orders only, customer management
+   - Warehouse: Order fulfillment, inventory updates, shipping management
+
+4. **User Interface Enhancements**
+   - Role-specific navigation menu filtering
+   - Vietnamese language interface throughout
+   - Order status workflow with visual indicators
+   - Comprehensive order details modal with all information
+
+### 🔄 Current Implementation
+- All core authentication and order management features are functional
+- Role-based permissions are enforced at both UI and service levels
+- Order workflow follows proper business logic with status transitions
+- Customer and promotion management integrated into order creation
+
+### Demo Accounts Available
+- **Manager**: username `manager1`, password `password123`
+- **Salesperson**: username `sales1`, password `password123`  
+- **Warehouse**: username `warehouse1`, password `password123`
+
+## Recent Changes
+
+June 26, 2025:
+- Implemented complete role-based authentication system
+- Created enhanced order creation form with customer search
+- Added automatic promotion application functionality
+- Built comprehensive order workflow management
+- Integrated Vietnamese localization throughout interface
+- Added role-specific dashboard statistics and filtering
+- Enhanced order workflow with status transitions (draft → confirmed → preparing → shipped → delivered)
+- Implemented EnhancedCreateOrderForm with automatic customer creation and promotion application
+- Updated OrderWorkflowActions component with role-based permissions
+- Created comprehensive Vietnamese order management interface with proper currency formatting
 
 ## User Preferences
 
-```
 Preferred communication style: Simple, everyday language.
-```

@@ -11,23 +11,14 @@ import Suppliers from './pages/Suppliers/Suppliers';
 import PurchaseOrders from './pages/PurchaseOrders/PurchaseOrders';
 import Reports from './pages/Reports/Reports';
 
-function App() {
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/promotions" element={<Promotions />} />
-          <Route path="/suppliers" element={<Suppliers />} />
-          <Route path="/purchase-orders" element={<PurchaseOrders />} />
-          <Route path="/reports" element={<Reports />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/orders" element={<Orders />} />
+      </Routes>
+    </Layout>
+      </Router>
   );
 }
 
