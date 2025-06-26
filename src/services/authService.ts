@@ -1,4 +1,5 @@
 import { User, LoginRequest, LoginResponse } from '../types';
+import { BaseHybridService } from './baseService';
 
 // Mock user data for demonstration
 const mockUsers: User[] = [
@@ -37,38 +38,59 @@ const mockUsers: User[] = [
   },
 ];
 
-class AuthService {
+class AuthService extends BaseHybridService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
 
   async login(loginData: LoginRequest): Promise<LoginResponse> {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const mockFallback = async () => {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, this.getMockDelay()));
 
-    // Mock authentication - in production, this would call your Spring Boot backend
-    const user = mockUsers.find(u => u.username === loginData.username);
-    
-    if (!user || !user.active) {
-      throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
-    }
+      // Mock authentication
+      const user = mockUsers.find(u => u.username === loginData.username);
+      
+      if (!user || !user.active) {
+        throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
+      }
 
-    // Mock password check - in production, this would be handled by backend
-    const mockPassword = 'password123'; // In real app, this would be hashed and compared on backend
-    if (loginData.password !== mockPassword) {
-      throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
-    }
+      // Mock password check
+      const mockPassword = 'password123';
+      if (loginData.password !== mockPassword) {
+        throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
+      }
 
-    const token = this.generateMockToken(user);
-    const response: LoginResponse = {
-      user,
-      token,
+      const token = this.generateMockToken(user);
+      const response: LoginResponse = {
+        user,
+        token,
+      };
+
+      // Store auth data in localStorage
+      localStorage.setItem(this.TOKEN_KEY, token);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+
+      return response;
     };
 
-    // Store auth data in localStorage
-    localStorage.setItem(this.TOKEN_KEY, token);
-    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    try {
+      const response = await this.apiRequest<LoginResponse>(
+        '/auth/login',
+        {
+          method: 'POST',
+          body: JSON.stringify(loginData),
+        },
+        mockFallback
+      );
 
-    return response;
+      // Store auth data in localStorage
+      localStorage.setItem(this.TOKEN_KEY, response.token);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+
+      return response;
+    } catch (error) {
+      return await mockFallback();
+    }
   }
 
   async logout(): Promise<void> {

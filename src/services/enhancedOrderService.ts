@@ -1,24 +1,37 @@
 import { EnhancedOrder } from '../types';
 import { mockEnhancedOrders } from '../data/mockEnhancedOrders';
+import { BaseHybridService } from './baseService';
 
-class EnhancedOrderService {
+class EnhancedOrderService extends BaseHybridService {
   private orders: EnhancedOrder[] = [...mockEnhancedOrders];
 
   async getOrders(userId?: string, userRole?: string): Promise<EnhancedOrder[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        let filteredOrders = [...this.orders];
+    const mockFallback = async () => {
+      return new Promise<EnhancedOrder[]>((resolve) => {
+        setTimeout(() => {
+          let filteredOrders = [...this.orders];
 
-        // Role-based filtering
-        if (userRole === 'employee') {
-          // Employee only sees their own orders
-          filteredOrders = this.orders.filter(order => order.salesPerson.id === userId);
-        }
-        // Admin and Manager can see all orders
+          // Role-based filtering
+          if (userRole === 'employee') {
+            // Employee only sees their own orders
+            filteredOrders = this.orders.filter(order => order.salesPerson.id === userId);
+          }
+          // Admin and Manager can see all orders
 
-        resolve(filteredOrders);
-      }, 500);
-    });
+          resolve(filteredOrders);
+        }, this.getMockDelay());
+      });
+    };
+
+    try {
+      return await this.apiRequest<EnhancedOrder[]>(
+        `/orders?userId=${userId}&userRole=${userRole}`,
+        { method: 'GET' },
+        mockFallback
+      );
+    } catch (error) {
+      return await mockFallback();
+    }
   }
 
   async getOrderById(id: string, userId?: string, userRole?: string): Promise<EnhancedOrder | null> {
