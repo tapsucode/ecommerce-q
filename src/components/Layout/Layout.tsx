@@ -1,6 +1,8 @@
 import React from 'react';
-import Sidebar from './Sidebar';
+import { useAuth } from '../../hooks/useAuth';
 import Header from './Header';
+import Sidebar from './Sidebar';
+import ConnectionStatus from '../UI/ConnectionStatus';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,11 +10,12 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-64">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="p-6">
+        <ConnectionStatus />
+        <main className="flex-1 overflow-auto p-6">
           {children}
         </main>
       </div>

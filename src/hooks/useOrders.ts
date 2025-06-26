@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { EnhancedOrder } from '../types';
-import { orderService } from '../services/orderService';
+import { orderService } from '../services/enhancedOrderService';
 import { useAuth } from './useAuth';
 
 export const useOrders = () => {

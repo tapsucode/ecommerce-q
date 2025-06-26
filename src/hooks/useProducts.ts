@@ -10,12 +10,11 @@ export const useProducts = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const data = await productService.getAll();
+      const service = serviceFactory.getProductService();
+      const data = await service.getAll();
       setProducts(data);
-      setError(null);
-    } catch (err) {
+    } catch (error) {
       setError('Failed to fetch products');
-      console.error(err);
     } finally {
       setLoading(false);
     }

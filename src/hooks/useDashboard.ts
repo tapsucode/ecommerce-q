@@ -7,28 +7,27 @@ export const useDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDashboardStats = async () => {
+  const fetchStats = async () => {
     try {
       setLoading(true);
-      const data = await dashboardService.getStats();
+      const service = serviceFactory.getDashboardService();
+      const data = await service.getStats();
       setStats(data);
-      setError(null);
-    } catch (err) {
+    } catch (error) {
       setError('Failed to fetch dashboard stats');
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDashboardStats();
+    fetchStats();
   }, []);
 
   return {
     stats,
     loading,
     error,
-    fetchDashboardStats
+    fetchStats
   };
 };

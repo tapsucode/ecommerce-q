@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Customer } from '../types';
-import { customerService } from '../services/customerService';
+import { serviceFactory } from '../services/serviceFactory';
 
 export const useCustomers = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -10,7 +10,8 @@ export const useCustomers = () => {
   const fetchCustomers = async () => {
     try {
       setLoading(true);
-      const data = await customerService.getAll();
+      const service = serviceFactory.getCustomerService();
+      const data = await service.getAll();
       setCustomers(data);
       setError(null);
     } catch (err) {
@@ -23,7 +24,8 @@ export const useCustomers = () => {
 
   const createCustomer = async (customer: Omit<Customer, 'id' | 'createdAt' | 'totalOrders' | 'totalSpent'>) => {
     try {
-      const newCustomer = await customerService.create(customer);
+      const service = serviceFactory.getCustomerService();
+      const newCustomer = await service.create(customer);
       setCustomers(prev => [...prev, newCustomer]);
       return newCustomer;
     } catch (err) {
@@ -34,7 +36,8 @@ export const useCustomers = () => {
 
   const updateCustomer = async (id: string, customer: Partial<Customer>) => {
     try {
-      const updatedCustomer = await customerService.update(id, customer);
+      const service = serviceFactory.getCustomerService();
+      const updatedCustomer = await service.update(id, customer);
       setCustomers(prev => prev.map(c => c.id === id ? updatedCustomer : c));
       return updatedCustomer;
     } catch (err) {

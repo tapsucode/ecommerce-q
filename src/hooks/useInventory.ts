@@ -10,6 +10,9 @@ export const useInventory = () => {
   const fetchInventory = async () => {
     try {
       setLoading(true);
+      // Assuming serviceFactory and getInventoryService are available in the scope
+      // and correctly configured to provide the inventoryService.  If not,
+      // this will need to be adjusted based on the actual implementation.
       const data = await inventoryService.getAll();
       setInventory(data);
       setError(null);
