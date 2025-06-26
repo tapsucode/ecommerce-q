@@ -1,143 +1,234 @@
-import { Promotion } from '../types';
 
-class PromotionService {
-  private promotions: Promotion[] = [
+import { EnhancedPromotion } from '../types';
+import { BaseHybridService } from './baseService';
+
+class PromotionService extends BaseHybridService {
+  private promotions: EnhancedPromotion[] = [
     {
       id: '1',
       name: 'Giảm giá 10% cho đơn hàng trên 500k',
-      description: 'Áp dụng cho tất cả sản phẩm khi đơn hàng có giá trị từ 500,000 VND trở lên',
-      type: 'percentage_discount',
+      type: 'percentage',
+      value: 10,
+      minOrderAmount: 500000,
+      isActive: true,
       startDate: '2024-01-01T00:00:00Z',
       endDate: '2024-12-31T23:59:59Z',
-      usageLimit: 1000,
-      usageCount: 245,
-      rules: [
-        {
-          id: '1',
-          ruleType: 'condition',
-          ruleData: { condition: 'cart_total', operator: '>=', value: '500000' },
-          priority: 0
-        },
-        {
-          id: '2',
-          ruleType: 'action',
-          ruleData: { action: 'discount_percentage', value: '10' },
-          priority: 1
-        }
-      ],
-      active: true,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z'
     },
     {
       id: '2',
       name: 'Miễn phí vận chuyển',
-      description: 'Miễn phí vận chuyển cho đơn hàng trên 300k',
       type: 'free_shipping',
+      value: 0,
+      minOrderAmount: 300000,
+      isActive: true,
       startDate: '2024-01-01T00:00:00Z',
-      usageCount: 156,
-      rules: [
-        {
-          id: '3',
-          ruleType: 'condition',
-          ruleData: { condition: 'cart_total', operator: '>=', value: '300000' },
-          priority: 0
-        },
-        {
-          id: '4',
-          ruleType: 'action',
-          ruleData: { action: 'free_shipping', value: 'true' },
-          priority: 1
-        }
-      ],
-      active: true,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z'
     }
   ];
 
-  async getAll(): Promise<Promotion[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(this.promotions), 400);
-    });
+  async getAll(): Promise<EnhancedPromotion[]> {
+    const mockFallback = async () => {
+      return new Promise<EnhancedPromotion[]>((resolve) => {
+        setTimeout(() => resolve([...this.promotions]), this.getMockDelay());
+      });
+    };
+
+    try {
+      return await this.apiRequest<EnhancedPromotion[]>(
+        '/promotions',
+        { method: 'GET' },
+        mockFallback
+      );
+    } catch (error) {
+      return await mockFallback();
+    }
   }
 
-  async getById(id: string): Promise<Promotion | null> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const promotion = this.promotions.find(p => p.id === id) || null;
-        resolve(promotion);
-      }, 300);
-    });
+  async getById(id: string): Promise<EnhancedPromotion | null> {
+    const mockFallback = async () => {
+      return new Promise<EnhancedPromotion | null>((resolve) => {
+        setTimeout(() => {
+          const promotion = this.promotions.find(p => p.id === id) || null;
+          resolve(promotion);
+        }, this.getMockDelay());
+      });
+    };
+
+    try {
+      return await this.apiRequest<EnhancedPromotion | null>(
+        `/promotions/${id}`,
+        { method: 'GET' },
+        mockFallback
+      );
+    } catch (error) {
+      return await mockFallback();
+    }
   }
 
-  async create(promotion: Omit<Promotion, 'id' | 'createdAt' | 'updatedAt' | 'usageCount'>): Promise<Promotion> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newPromotion: Promotion = {
-          ...promotion,
-          id: Math.random().toString(36).substr(2, 9),
-          usageCount: 0,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        this.promotions.push(newPromotion);
-        resolve(newPromotion);
-      }, 800);
-    });
+  async getActivePromotions(): Promise<EnhancedPromotion[]> {
+    const mockFallback = async () => {
+      return new Promise<EnhancedPromotion[]>((resolve) => {
+        setTimeout(() => {
+          const now = new Date();
+          const activePromotions = this.promotions.filter(p => {
+            if (!p.isActive) return false;
+            
+            const startDate = p.startDate ? new Date(p.startDate) : null;
+            const endDate = p.endDate ? new Date(p.endDate) : null;
+            
+            if (startDate && startDate > now) return false;
+            if (endDate && endDate < now) return false;
+            
+            return true;
+          });
+          resolve(activePromotions);
+        }, this.getMockDelay());
+      });
+    };
+
+    try {
+      return await this.apiRequest<EnhancedPromotion[]>(
+        '/promotions/active',
+        { method: 'GET' },
+        mockFallback
+      );
+    } catch (error) {
+      return await mockFallback();
+    }
   }
 
-  async update(id: string, updates: Partial<Promotion>): Promise<Promotion> {
-    return new Promise((resolve, reject) => {
+  async findApplicablePromotions(orderTotal: number): Promise<EnhancedPromotion[]> {
+    const activePromotions = await this.getActivePromotions();
+    return activePromotions.filter(p => 
+      !p.minOrderAmount || orderTotal >= p.minOrderAmount
+    );
+  }
+
+  async calculateDiscount(promotion: EnhancedPromotion, orderTotal: number, shippingFee: number = 0): Promise<{
+    discountAmount: number;
+    newShippingFee: number;
+    description: string;
+  }> {
+    return new Promise((resolve) => {
       setTimeout(() => {
-        const index = this.promotions.findIndex(p => p.id === id);
-        if (index === -1) {
-          reject(new Error('Promotion not found'));
-          return;
+        let discountAmount = 0;
+        let newShippingFee = shippingFee;
+        let description = '';
+
+        switch (promotion.type) {
+          case 'percentage':
+            discountAmount = Math.floor(orderTotal * promotion.value / 100);
+            description = `Giảm ${promotion.value}% đơn hàng`;
+            break;
+          case 'fixed_amount':
+            discountAmount = Math.min(promotion.value, orderTotal);
+            description = `Giảm ${promotion.value.toLocaleString()}đ`;
+            break;
+          case 'free_shipping':
+            newShippingFee = 0;
+            description = 'Miễn phí vận chuyển';
+            break;
         }
-        this.promotions[index] = {
-          ...this.promotions[index],
-          ...updates,
-          updatedAt: new Date().toISOString(),
-        };
-        resolve(this.promotions[index]);
-      }, 600);
+
+        resolve({
+          discountAmount,
+          newShippingFee,
+          description
+        });
+      }, 100);
     });
+  }
+
+  async create(promotion: Omit<EnhancedPromotion, 'id' | 'createdAt' | 'updatedAt'>): Promise<EnhancedPromotion> {
+    const mockFallback = async () => {
+      return new Promise<EnhancedPromotion>((resolve) => {
+        setTimeout(() => {
+          const newPromotion: EnhancedPromotion = {
+            ...promotion,
+            id: `PROMO-${Date.now().toString().slice(-6)}`,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          this.promotions.push(newPromotion);
+          resolve(newPromotion);
+        }, this.getMockDelay());
+      });
+    };
+
+    try {
+      return await this.apiRequest<EnhancedPromotion>(
+        '/promotions',
+        {
+          method: 'POST',
+          body: JSON.stringify(promotion),
+        },
+        mockFallback
+      );
+    } catch (error) {
+      return await mockFallback();
+    }
+  }
+
+  async update(id: string, updates: Partial<EnhancedPromotion>): Promise<EnhancedPromotion> {
+    const mockFallback = async () => {
+      return new Promise<EnhancedPromotion>((resolve, reject) => {
+        setTimeout(() => {
+          const index = this.promotions.findIndex(p => p.id === id);
+          if (index === -1) {
+            reject(new Error('Promotion not found'));
+            return;
+          }
+          this.promotions[index] = {
+            ...this.promotions[index],
+            ...updates,
+            updatedAt: new Date().toISOString(),
+          };
+          resolve(this.promotions[index]);
+        }, this.getMockDelay());
+      });
+    };
+
+    try {
+      return await this.apiRequest<EnhancedPromotion>(
+        `/promotions/${id}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify(updates),
+        },
+        mockFallback
+      );
+    } catch (error) {
+      return await mockFallback();
+    }
   }
 
   async delete(id: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.promotions.findIndex(p => p.id === id);
-        if (index === -1) {
-          reject(new Error('Promotion not found'));
-          return;
-        }
-        this.promotions.splice(index, 1);
-        resolve();
-      }, 400);
-    });
-  }
+    const mockFallback = async () => {
+      return new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+          const index = this.promotions.findIndex(p => p.id === id);
+          if (index === -1) {
+            reject(new Error('Promotion not found'));
+            return;
+          }
+          this.promotions.splice(index, 1);
+          resolve();
+        }, this.getMockDelay());
+      });
+    };
 
-  async getActivePromotions(): Promise<Promotion[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const now = new Date();
-        const activePromotions = this.promotions.filter(p => {
-          if (!p.active) return false;
-          
-          const startDate = p.startDate ? new Date(p.startDate) : null;
-          const endDate = p.endDate ? new Date(p.endDate) : null;
-          
-          if (startDate && startDate > now) return false;
-          if (endDate && endDate < now) return false;
-          if (p.usageLimit && p.usageCount >= p.usageLimit) return false;
-          
-          return true;
-        });
-        resolve(activePromotions);
-      }, 300);
-    });
+    try {
+      await this.apiRequest<void>(
+        `/promotions/${id}`,
+        { method: 'DELETE' },
+        mockFallback
+      );
+    } catch (error) {
+      await mockFallback();
+    }
   }
 }
 
